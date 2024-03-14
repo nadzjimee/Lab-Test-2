@@ -1,0 +1,110 @@
+//import the respective packages
+import java.io.*;
+import java.util.StringTokenizer;
+import java.text.DecimalFormat;
+import javax.swing.JOptionPane;
+
+//driver class
+public class DemoEmployeeSalaryProgram
+{
+   //Driver method
+   public static void main(String[]args) throws IOException
+    {
+        //Instantiate the object of DecimalFormat
+        DecimalFormat dF = new DecimalFormat("0.00");
+        
+        try
+        {
+            //set I/O file
+            //input file
+            BufferedReader inputFile = new BufferedReader(new FileReader("employeeSalaries.txt"));
+            
+            //2 output files
+            PrintWriter empData = new PrintWriter(new FileWriter("employeeData.txt"));
+            
+            
+            //Declare the variables
+            String inputData = null;
+            String empName = "";
+            double empSalary = 0.00;
+            int empWorkingYear = 0;
+            
+            //variable for top employee
+            String top_empName = "";
+            double top_empSalary = 0.00;
+            int top_empWorkingYear = 0;
+            
+            //variable for newest employee
+            String latest_empName = "";
+            double latest_empSalary = 0.00;
+            int latest_empWorkingYear = 0;
+            
+            //Write the title header
+            empData.println("----------------List of Employees-----------------------");
+            
+            while((inputData = inputFile.readLine()) != null)
+            {
+                //Instantiate the object reference of the StringTokenizer class
+                StringTokenizer strT = new StringTokenizer(inputData,"|");
+                empName= strT.nextToken();
+                empSalary = Double.parseDouble(strT.nextToken());
+                empWorkingYear = Integer.parseInt(strT.nextToken());
+                
+                //calculate annual Salary
+                double annualSalary = empSalary + (empSalary * 0.05);
+                
+                //to test for the negative number
+                if(empSalary < 0 || empWorkingYear <0)
+                  throw new IllegalArgumentException();
+                
+                //find top employee
+                if(annualSalary > top_empSalary)
+                {
+                    top_empName = empName;
+                    top_empSalary = annualSalary;
+                    top_empWorkingYear = empWorkingYear;
+                }
+                //find the employee with the least years of service
+                if(latest_empWorkingYear == 0 || empWorkingYear < latest_empWorkingYear)
+                {
+                    latest_empName = empName;
+                    latest_empSalary = annualSalary;
+                    latest_empWorkingYear = empWorkingYear;
+                    
+                }
+                
+                //show list of employees
+                String employData = empName+"\t\t RM "+annualSalary+"\t\t "+empWorkingYear+" years";
+                empData.println(employData);
+    
+            }
+            //top employee
+            empData.println("\n\n -------- Top Performing Employee Details -------");
+            String top_employData = top_empName+"\t\t RM "+top_empSalary+"\t\t "+top_empWorkingYear+" years";
+            empData.println(top_employData);
+            //display 
+            JOptionPane.showMessageDialog(null,"--------Top performing Employee Details ---------\n"+top_employData);
+            
+            //latest employee
+            empData.println("\n\n -------- Details of Employee with the least years of service -------");
+            String latest_employData = latest_empName+"\t\t RM "+latest_empSalary+"\t\t "+latest_empWorkingYear+" years";
+            empData.println(latest_employData);
+            JOptionPane.showMessageDialog(null,"--------Details of Employee with the least years of service ---------\n"+latest_employData);
+
+            //close all the I/O files
+            inputFile.close();
+            empData.close();
+            
+        }
+        catch(FileNotFoundException ex)
+        {
+            String output="File not found";
+            JOptionPane.showMessageDialog(null, output);
+        }//end of catch
+        catch(IllegalArgumentException iae)
+        {
+            String output="Invalid input!";
+            JOptionPane.showMessageDialog(null, output);
+        }//end of catch
+    }//end of main
+}//end of class
